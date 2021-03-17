@@ -38,6 +38,8 @@ var keywords = map[string]TokenType {
 	"let": LET,
 }
 
+// LookupIdent 関数
+// LexerがLetter解読をしている際に出現した文字列が予約語か否かを判定
 func LookupIdent(ident string) TokenType {
 	if tok, ok := keywords[ident]; ok {
 		return tok
