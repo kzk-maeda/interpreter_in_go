@@ -18,6 +18,13 @@ const (
 	// 演算子
 	ASSIGN = "="
 	PLUS   = "+"
+	MINUS  = "-"
+	BANG   = "!"
+	ASTERISK = "*"
+	SLASH  = "/"
+
+	LT = "<"
+	GT = ">"
 
 	// デリミタ
 	COMMA     = ","
