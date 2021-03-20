@@ -6,7 +6,6 @@ import (
 	"testing"
 )
 
-
 // ***********************
 //   LET TEST
 // ***********************
@@ -69,7 +68,6 @@ func testLetStatement(t *testing.T, s ast.Statement, name string) bool {
 
 	return true
 }
-
 
 // ***********************
 //   RETURN TEST
