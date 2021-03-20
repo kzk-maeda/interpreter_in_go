@@ -24,9 +24,9 @@ func New(input string) *Lexer {
 // readPositionにある文字に対応するtokenを返却する
 func (l *Lexer) NextToken() token.Token {
 	var tok token.Token
-	
+
 	l.skipWhitespace()
-	
+
 	switch l.ch {
 	case '=':
 		if l.peekChar() == '=' {
@@ -78,17 +78,17 @@ func (l *Lexer) NextToken() token.Token {
 			tok.Literal = l.readIdentifier()
 			tok.Type = token.LookupIdent(tok.Literal) // 予約語かどうかを判定
 			return tok
-			} else if isDigit(l.ch) {
-				tok.Type = token.INT
-				tok.Literal = l.readNumber()
-				return tok
-				} else {
-					tok = newToken(token.ILLEGAL, l.ch)
-				}
-				
-			}
-			l.readChar()
+		} else if isDigit(l.ch) {
+			tok.Type = token.INT
+			tok.Literal = l.readNumber()
 			return tok
+		} else {
+			tok = newToken(token.ILLEGAL, l.ch)
+		}
+
+	}
+	l.readChar()
+	return tok
 }
 
 // ********************************

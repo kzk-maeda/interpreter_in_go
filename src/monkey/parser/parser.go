@@ -12,14 +12,14 @@ type Parser struct {
 	// InstanceのNextTokenを繰り返し呼び出し、次のTokenを取得する
 	l *lexer.Lexer
 
-	curToken token.Token
+	curToken  token.Token
 	peekToken token.Token
-	errors []string
+	errors    []string
 }
 
 func New(l *lexer.Lexer) *Parser {
 	p := &Parser{
-		l: l,
+		l:      l,
 		errors: []string{},
 	}
 
@@ -32,11 +32,14 @@ func New(l *lexer.Lexer) *Parser {
 
 // nextToken 関数
 // curToken(現在調べているToken)とpeerToken(次に読み込むToken)を得るためのHelper
-func (p *Parser) nextToken()  {
+func (p *Parser) nextToken() {
 	p.curToken = p.peekToken
 	p.peekToken = p.l.NextToken()
 }
 
+// ParseProgram 関数
+// TokenがEOFになるまで順にTokenを読み進めていく
+// 実態の解析はparseStatement関数に移譲
 func (p *Parser) ParseProgram() *ast.Program {
 	program := &ast.Program{}
 	program.Statements = []ast.Statement{}
@@ -52,6 +55,9 @@ func (p *Parser) ParseProgram() *ast.Program {
 	return program
 }
 
+// parseStatement 関数
+// ParseProgramから受け取ったstatementを解析
+// Token種別ごとにswitchする
 func (p *Parser) parseStatement() ast.Statement {
 	switch p.curToken.Type {
 	case token.LET:
@@ -61,19 +67,25 @@ func (p *Parser) parseStatement() ast.Statement {
 	}
 }
 
+// parseLetStatement 関数
+//
 func (p *Parser) parseLetStatement() *ast.LetStatement {
 	stmt := &ast.LetStatement{Token: p.curToken}
 
+	// expectPeek の中で nextToken() を読んでいるのでToken位置が進んでいる
+	// 最初に期待するTokenはIDENT
 	if !p.expectPeek(token.IDENT) {
 		return nil
 	}
 
 	stmt.Name = &ast.Identifier{Token: p.curToken, Value: p.curToken.Literal}
 
+	// 次に期待するTokenはASSIGN
 	if !p.expectPeek(token.ASSIGN) {
 		return nil
 	}
 
+	// TODO: SEMICOLONが現れるまで読み飛ばしている
 	for !p.curTokenIs(token.SEMICOLON) {
 		p.nextToken()
 	}
@@ -104,6 +116,6 @@ func (p *Parser) Errors() []string {
 
 func (p *Parser) peekError(t token.TokenType) {
 	msg := fmt.Sprintf("expected next token to be %s, got %s instead",
-					t, p.peekToken.Type)
+		t, p.peekToken.Type)
 	p.errors = append(p.errors, msg)
 }
